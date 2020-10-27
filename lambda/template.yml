@@ -1,0 +1,32 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: Example Lambda
+
+Parameters:
+  VPC:
+    Type: AWS::EC2::VPC::Id
+    Description: VPC to attach lambda to
+  Subnets:
+    Type: List<AWS::EC2::Subnet::Id>
+    Description: Subnets to attach lambda to
+
+
+Resources:
+  SecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      VpcId: !Ref VPC
+      GroupDescription: Lambda Security Group
+
+  Handler:
+    Type: AWS::Serverless::Function
+    Properties:
+      # as soon as we rely on third-party depedencies (pip packages to `virtualenv`), we are
+      # forced to create a zip-file, containing all relevant data
+      CodeUri: src/
+      Handler: handler.lambda_handler
+      Runtime: python3.7
+      VpcConfig:
+        SubnetIds: !Ref Subnets
+        SecurityGroups:
+          - !Ref SecurityGroup
