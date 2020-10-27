@@ -1,7 +1,8 @@
 # Overview
 This example shows how to connect a Python 3.7 client to an HTTPS server with a self-signed cert
 
-## 1. Start Server
+## 1. Start Server (if required, requires Docker)
+This is necessary to emulate
 ```
 cd server
 docker build -t ss-httpd .
@@ -13,9 +14,11 @@ To test
 
 The cert generated will use a hostname of `justme.localdomain`.  You can add to your `/etc/hosts` file
 
+`sudo sh -c "echo '127.0.0.1 justme.localdomain' >> /etc/hosts"`
+
 ## 2. Export Cert
 The below command will export the certificate to a PEM file
-Replace `localhost:8443` with the host:port combo
+
 ```
 cd client
 echo | openssl s_client -connect justme.localdomain:8443 2>&1 | sed -ne '/-BEGIN CERTIFICATE-/,/-END CERTIFICATE-/p' > cert.pem
